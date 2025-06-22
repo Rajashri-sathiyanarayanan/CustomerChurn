@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Churn Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* Dark background with gradient */
+        body {
+            background: linear-gradient(135deg, #000000, #0d0d0d);
+            font-family: 'Segoe UI', sans-serif;
+            color: #eee;
+            min-height: 100vh;
+        }
+
+        /* Navbar dark with glowing brand */
+        .navbar {
+            background-color: #111111 !important;
+            box-shadow: 0 0 15px #00ffff88;
+        }
+        .navbar-brand {
+            color: #00ffff !important;
+            font-weight: bold;
+            text-shadow:
+                0 0 5px #00ffff,
+                0 0 10px #00ffff,
+                0 0 20px #00ffff;
+        }
+        .nav-link {
+            color: #aaa !important;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #00ffff !important;
+            text-shadow:
+                0 0 8px #00ffff,
+                0 0 12px #00ffff;
+        }
+
+        /* Form container with dark background and glow */
+        .form-container {
+            background: #111;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow:
+                0 0 10px #00ffffaa,
+                0 0 20px #00ffff55;
+        }
+
+        /* Hero with darker overlay */
+        .hero {
+            background-image: url('https://source.unsplash.com/1600x400/?business,customer');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            border-radius: 12px;
+            filter: brightness(0.3);
+            box-shadow:
+                0 0 15px #00ffffaa inset;
+        }
+
+        /* Footer dark */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            background-color: #111;
+            border-top: 1px solid #222;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Inputs and selects with dark style and glow on focus */
+        input.form-control,
+        select.form-select {
+            background-color: #222;
+            border: 1px solid #00ffffaa;
+            color: #eee;
+            box-shadow: none;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        input.form-control:focus,
+        select.form-select:focus {
+            border-color: #00ffff;
+            box-shadow:
+                0 0 8px #00ffff,
+                0 0 15px #00ffff;
+            background-color: #111;
+            color: #fff;
+        }
+
+        /* Labels glowing effect */
+        label.form-label {
+            color: #00ffffcc;
+            text-shadow:
+                0 0 3px #00ffffaa;
+        }
+
+        /* Button with glowing effect */
+        button.btn-primary {
+            background-color: #00ffff;
+            border: none;
+            color: #000;
+            font-weight: 600;
+            box-shadow:
+                0 0 15px #00ffff,
+                0 0 30px #00ffff55;
+            transition: background-color 0.3s ease;
+        }
+        button.btn-primary:hover {
+            background-color: #00e5e5;
+            box-shadow:
+                0 0 20px #00e5e5,
+                0 0 40px #00e5e5aa;
+            color: #000;
+        }
+
+        /* Alert info with dark style */
+        .alert-info {
+            background-color: #004d4d;
+            color: #a0ffff;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 10px #00ffffaa;
+        }
+
+        /* About section text */
+        #about h4 {
+            color: #00ffff;
+            text-shadow:
+                0 0 5px #00ffffaa;
+        }
+        #about p {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">ChurnPredictor</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="hero mb-4 d-flex align-items-center" style="border-radius: 12px; background-color: #111; padding: 20px;">
+  <!-- Left: Image -->
+  <div style="flex: 1; padding-right: 20px;">
+    <img src="{{ url_for('static', filename='customerchurn.png') }}" alt="Customer Churn" style="width: 100%; border-radius: 8px; object-fit: cover; height: 300px; display: block;" />
+
+  </div>
+
+  <!-- Right: Text -->
+  <div style="flex: 1; color: #fff; text-align: left;">
+    <h2 style="color: #00ffe1;">How to Use This Website</h2>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      Enter the customer details in the form below and click <strong>Predict</strong>. Our AI-powered churn predictor analyzes the data and estimates the likelihood of a customer leaving your service.<br /><br />
+      Use these insights to improve customer retention strategies and grow your business effectively.
+    </p>
+  </div>
+</div>
+
+</div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 form-container">
+            <h3 class="mb-4 text-center">Enter Customer Details</h3>
+            <form action="/predict" method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Gender</label>
+                        <input type="text" class="form-control" name="gender" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="region_category" class="form-label">Region Category</label>
+                        <input type="text" class="form-control" name="region_category" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="membership_category" class="form-label">Membership Category</label>
+                        <select class="form-select" name="membership_category" required>
+                            <option value="" disabled selected>Select membership category</option>
+                            <option value="Platinum">Platinum</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Silver">Silver</option>
+                            <option value="Basic">Basic</option>
+                            <option value="No membership">No membership</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" name="age" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="days_since_joining" class="form-label">Days Since Joining</label>
+                        <input type="number" class="form-control" name="days_since_joining" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="days_since_last_visit" class="form-label">Days Since Last Visit</label>
+                        <input type="number" class="form-control" name="days_since_last_visit" required />
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-4">Predict</button>
+                </div>
+            </form>
+            {% if prediction_text %}
+                <div class="alert alert-info text-center mt-4">{{ prediction_text }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <section id="about" class="mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 text-center">
+                <h4>About This Project</h4>
+                <p>
+  This customer churn predictor uses a trained machine learning model to estimate the risk of a customer leaving a service. Built with Python, Flask, and Bootstrap, the system integrates explainability tools and a clean interface to provide actionable insights.Customer churn prediction is vital for businesses to identify customers at risk of leaving, enabling timely intervention and improved retention strategies. Our model analyzes various customer attributes such as demographics, behavior patterns, and engagement metrics to deliver accurate predictions.
+  The project leverages advanced machine learning techniques, including LightGBM and Random Forest algorithms, ensuring both high accuracy and interpretability. The user-friendly web interface makes it easy for businesses to input customer data and receive instant predictions.Benefits include reducing revenue loss, optimizing marketing spend, and fostering better customer relationships. Future plans include integrating real-time data feeds, personalized recommendation systems, and enhanced visualization dashboards to make the insights even more actionable.By using this tool, businesses can proactively address customer needs and maintain a competitive edge in the market.
+</p>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="footer">
+        &copy; 2025 Rajashri S – Customer Churn Predictor
+    </div>
+</div>
+
+</body>
+</html>
